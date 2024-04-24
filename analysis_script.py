@@ -28,7 +28,7 @@ df["Recession"] = df["Recession"].fillna(0).astype(int)
 # export dataset with engineered features
 df.to_csv("housing_prices.csv")
 
-# create numpy arrays that will be used to create recession bands in time series plot
+# create arrays that will be used to create recession bands in time series plot
 y = []
 r = []
 prev_rec = 0
@@ -42,10 +42,9 @@ for year, rec, next_rec in zip(df["Year"].values, df["Recession"].values, df["Re
         y.append(year + 0.5)
         r.append(1)
     prev_rec = rec
-y = np.array(y)
 r = np.array(r)
 max_ = max(df["Housing Price Index"].values)
-max_ = np.array([max_ for yi in y])
+max_ = [max_ for yi in y]
 
 # get min and max years in dataset
 min_year = df["Year"].values[0]
@@ -58,7 +57,7 @@ sns.set_style("darkgrid")
 plt.xlim(min_year, max_year)
 plt.ylim(min(df["Housing Price Index"].values), max(df["Housing Price Index"].values))
 sns.lineplot(x="Year", y="Housing Price Index", data=df)
-plt.fill_between(y, max_, where=np.array(r)==1, color="gray", alpha=0.5)
+plt.fill_between(y, max_, where=r==1, color="gray", alpha=0.5)
 plt.title(f"Housing Prices ({min_year}-{max_year})")
 plt.savefig('housing_prices.png', bbox_inches='tight')
 plt.show()
