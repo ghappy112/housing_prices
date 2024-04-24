@@ -23,8 +23,7 @@ recession_df["Year"] = recession_df["Year"].astype(int)
 # join housing prices and recession datasets
 df = df.merge(recession_df, how="left", on="Year")
 del recession_df
-df["Recession"] = df["Recession"].fillna(0)
-df["Recession"] = df["Recession"].astype(int)
+df["Recession"] = df["Recession"].fillna(0).astype(int)
 
 # export dataset with engineered features
 df.to_csv("housing_prices.csv")
