@@ -29,7 +29,8 @@ df["Recession"] = df["Recession"].fillna(0).astype(int)
 df.to_csv("housing_prices.csv")
 
 # create numpy arrays that will be used to create recession bands in time series plot
-y, r = [], []
+y = []
+r = []
 prev_rec = 0
 for year, rec, next_rec in zip(df["Year"].values, df["Recession"].values, df["Recession"].values[1:] + [0]):
     if rec == 1 and prev_rec == 0:
