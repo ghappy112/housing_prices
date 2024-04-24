@@ -42,7 +42,7 @@ for year, rec, next_rec in zip(df["Year"].values, df["Recession"].values, df["Re
         y.append(year + 0.5)
         r.append(1)
     prev_rec = rec
-r = np.array(r)
+r = np.array(r)==1
 max_ = max(df["Housing Price Index"].values)
 max_ = [max_ for yi in y]
 
@@ -57,7 +57,7 @@ sns.set_style("darkgrid")
 plt.xlim(min_year, max_year)
 plt.ylim(min(df["Housing Price Index"].values), max(df["Housing Price Index"].values))
 sns.lineplot(x="Year", y="Housing Price Index", data=df)
-plt.fill_between(y, max_, where=r==1, color="gray", alpha=0.5)
+plt.fill_between(y, max_, where=r, color="gray", alpha=0.5)
 plt.title(f"Housing Prices ({min_year}-{max_year})")
 plt.savefig('housing_prices.png', bbox_inches='tight')
 plt.show()
