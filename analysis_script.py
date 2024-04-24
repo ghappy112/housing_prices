@@ -43,18 +43,21 @@ for year, rec, next_rec in zip(df["Year"].values, df["Recession"].values, df["Re
     prev_rec = rec
 y = np.array(y)
 r = np.array(r)
+max_ = max(df["Housing Price Index"].values)
+max_ = np.array([max_ for yi in y])
+
+# get min and max years in dataset
+min_year = df["Year"].values[0]
+max_year = df["Year"].values[-1]
 
 # create and export time series plot
 k = 2
 plt.figure(figsize=(6.4*k,4.8*k))
 sns.set_style("darkgrid")
-min_year = df["Year"].values[0]
-max_year = df["Year"].values[-1]
 plt.xlim(min_year, max_year)
 plt.ylim(min(df["Housing Price Index"].values), max(df["Housing Price Index"].values))
 sns.lineplot(x="Year", y="Housing Price Index", data=df)
-max_ = max(df["Housing Price Index"].values)
-plt.fill_between(y, [max_ for x in y], where=np.array(r)==1, color="gray", alpha=0.5, label="Binary = 1")
+plt.fill_between(y, max_, where=np.array(r)==1, color="gray", alpha=0.5, label="Binary = 1")
 plt.title(f"Housing Prices ({min_year}-{max_year})")
 plt.savefig('housing_prices.png', bbox_inches='tight')
 plt.show()
