@@ -3,27 +3,33 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+# load datasets
 df = pd.read_json("HPI_master.json")
 recession_df = pd.read_csv("JHDUSRGDPBR.csv")
 
+# clean housing prices dataset and engineer features
 df = df[(df["hpi_type"]=="traditional") & (df["place_name"]=="United States") & (df["frequency"]=="monthly") & (df["hpi_flavor"]=="purchase-only")][["yr", "period", "index_nsa"]].sort_values(by=["yr", "period"])
 df = df.groupby("yr")["index_nsa"].mean().to_frame()
 df = pd.DataFrame({"Year": df.index.values, "Housing Price Index": df["index_nsa"].values}).sort_values("Year")
 df["Housing Price Index"] = (df["Housing Price Index"] / df["Housing Price Index"].values[0]) * 100
 
+# clean recession dataset and engineer features
 recession_df.columns = [recession_df.columns[0], "Recession"]
 recession_df["Year"] = recession_df["DATE"].astype(str).str.split("-").apply(lambda x: x[0])
 recession_df = recession_df.groupby("Year").max("Recession")
 recession_df = pd.DataFrame({"Year": recession_df.index.values, "Recession": recession_df["Recession"].values})
 recession_df["Year"] = recession_df["Year"].astype(int)
 
+# join housing prices and recession datasets
 df = df.merge(recession_df, how="left", on="Year")
 del recession_df
 df["Recession"] = df["Recession"].fillna(0)
 df["Recession"] = df["Recession"].astype(int)
 
+# export dataset with engineered features
 df.to_csv("housing_prices.csv")
 
+# create numpy arrays that will be used to create recession bands in time series plot
 y, r = [], []
 prev_rec = 0
 for year, rec, next_rec in zip(df["Year"].values, df["Recession"].values, df["Recession"].values[1:] + [0]):
@@ -38,7 +44,8 @@ for year, rec, next_rec in zip(df["Year"].values, df["Recession"].values, df["Re
     prev_rec = rec
 y = np.array(y)
 r = np.array(r)
-    
+
+# create and export time series plot
 k = 2
 plt.figure(figsize=(6.4*k,4.8*k))
 sns.set_style("darkgrid")
